@@ -14,8 +14,8 @@ export const DEMO_PUZZLES: DemoMovie[] = [
     title: "Interestelar",
     originalTitle: "Interstellar",
     year: 2014,
-    poster: null,
-    image: "/demo/interstellar.png",
+    poster: "https://image.tmdb.org/t/p/w185/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+    image: "https://image.tmdb.org/t/p/w780/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
     cast: ["Matthew McConaughey", "Anne Hathaway", "Jessica Chastain"],
     director: "Christopher Nolan",
     synopsis:
@@ -26,8 +26,8 @@ export const DEMO_PUZZLES: DemoMovie[] = [
     title: "Blade Runner: O Caçador de Androides",
     originalTitle: "Blade Runner",
     year: 1982,
-    poster: null,
-    image: "/demo/bladerunner.png",
+    poster: "https://image.tmdb.org/t/p/w185/63N9uy8nd9j7Eog2axPQ8lbr3Wj.jpg",
+    image: "https://image.tmdb.org/t/p/w780/63N9uy8nd9j7Eog2axPQ8lbr3Wj.jpg",
     cast: ["Harrison Ford", "Rutger Hauer", "Sean Young"],
     director: "Ridley Scott",
     synopsis:
@@ -38,8 +38,8 @@ export const DEMO_PUZZLES: DemoMovie[] = [
     title: "Titanic",
     originalTitle: "Titanic",
     year: 1997,
-    poster: null,
-    image: "/demo/titanic.png",
+    poster: "https://image.tmdb.org/t/p/w185/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
+    image: "https://image.tmdb.org/t/p/w780/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
     cast: ["Leonardo DiCaprio", "Kate Winslet", "Billy Zane"],
     director: "James Cameron",
     synopsis:

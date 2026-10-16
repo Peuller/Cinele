@@ -86,19 +86,19 @@ async function getFullMovie(id: string): Promise<FullMovie> {
   const m = await tmdb<
     TmdbMovie & {
       credits: { cast: { name: string }[]; crew: { job: string; name: string }[] };
-      images: { backdrops: { file_path: string; iso_639_1: string | null; vote_average: number }[] };
+      images: { posters: { file_path: string; iso_639_1: string | null; vote_average: number }[] };
     }
-  >(`/movie/${id}`, { append_to_response: "credits,images", include_image_language: "null" });
+  >(`/movie/${id}`, { append_to_response: "credits,images", include_image_language: "pt,en,null" });
 
-  // Prefere um backdrop sem texto que não seja o principal (menos "manjado")
-  const backdrops = m.images?.backdrops ?? [];
-  const pick = backdrops[1] ?? backdrops[0];
-  const path = pick?.file_path ?? m.backdrop_path;
+  // Prioriza cartaz em português ou neutro/sem texto, ou o poster_path oficial
+  const posters = m.images?.posters ?? [];
+  const pick = posters.find((p) => p.iso_639_1 === "pt") ?? posters.find((p) => p.iso_639_1 === null) ?? posters[0];
+  const path = pick?.file_path ?? m.poster_path;
   const firstSentence = m.overview?.match(/^.*?[.!?](\s|$)/)?.[0]?.trim() ?? m.overview ?? null;
 
   return {
     ...lite(m),
-    image: path ? `${IMG}/w1280${path}` : "",
+    image: path ? `${IMG}/w780${path}` : "",
     cast: m.credits.cast.slice(0, 3).map((c) => c.name),
     director: m.credits.crew.find((c) => c.job === "Director")?.name ?? null,
     synopsis: firstSentence ? redact(firstSentence, m.title) : null,
@@ -146,7 +146,7 @@ async function randomId(): Promise<string> {
   if (isDemo) return DEMO_PUZZLES[Math.floor(Math.random() * DEMO_PUZZLES.length)].id;
   const page = 1 + Math.floor(Math.random() * 25); // top 500 populares
   const data = await tmdb<{ results: TmdbMovie[] }>("/movie/popular", { page: String(page), region: "BR" }, 3600);
-  const pool = data.results.filter((m) => m.backdrop_path);
+  const pool = data.results.filter((m) => m.poster_path);
   return String(pool[Math.floor(Math.random() * pool.length)].id);
 }
 

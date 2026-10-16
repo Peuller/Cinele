@@ -59,7 +59,7 @@ export default function Game() {
       setGame(null);
       const qs = m.kind === "archive" ? `?date=${m.date}` : m.kind === "infinite" ? "?random=1" : "";
       try {
-        const res = await fetch(`/api/puzzle${qs}`, { headers: authHeaders(auth.session) });
+        const res = await fetch(`/cinele/api/puzzle${qs}`, { headers: authHeaders(auth.session) });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erro ao carregar");
         const p = data as Puzzle;
@@ -101,7 +101,7 @@ export default function Game() {
     setBusy(true);
     const attempt = game.guesses.length + 1;
     try {
-      const res = await fetch("/api/guess", {
+      const res = await fetch("/cinele/api/guess", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: puzzle.token, guessId: m?.id ?? "skip", guessYear: m?.year ?? null, attempt }),
@@ -120,7 +120,7 @@ export default function Game() {
       if (!won) {
         setShake(true);
         setTimeout(() => setShake(false), 500);
-        if (!lost) flash(data.result === "close" ? "🟨 Quase! O ano é próximo." : "🟥 Não é esse… a cena ficou mais nítida.");
+        if (!lost) flash(data.result === "close" ? "🟨 Quase! O ano é próximo." : "🟥 Não é esse… o cartaz abriu mais!");
       }
       if (won) celebrate();
       if (won || lost) {
@@ -146,7 +146,7 @@ export default function Game() {
 
   const grantLetter = async () => {
     if (!puzzle || !game) return;
-    const res = await fetch("/api/hint", {
+    const res = await fetch("/cinele/api/hint", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: puzzle.token, reveal: game.reveal + 1 }),
@@ -162,8 +162,8 @@ export default function Game() {
   const stage = Math.min(wrong, MAX_ATTEMPTS - 1);
   const label = puzzle
     ? puzzle.mode === "infinite"
-      ? "Cena Infinita"
-      : `Cena do Dia #${puzzle.number}`
+      ? "Cartaz Infinito"
+      : `Cartaz do Dia #${puzzle.number}`
     : "";
 
   return (
@@ -281,7 +281,7 @@ export default function Game() {
       <HelpModal open={modal === "help"} onClose={() => (markHelp(), setModal(null))} />
       <Modal open={modal === "stats"} onClose={() => setModal(null)} title="Estatísticas" id="stats-modal">
         {stats && <StatsBlock stats={stats} />}
-        <p className="mt-4 text-center text-sm text-white/50">Próxima cena em <span className="font-mono text-amber-200">{countdown}</span></p>
+        <p className="mt-4 text-center text-sm text-white/50">Próximo cartaz em <span className="font-mono text-amber-200">{countdown}</span></p>
       </Modal>
       {game && puzzle && (
         <ResultModal

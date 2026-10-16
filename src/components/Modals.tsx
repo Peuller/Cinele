@@ -81,7 +81,7 @@ export function ResultModal({ open, onClose, won, answer, guesses, label, stats,
           </button>
         )}
       </div>
-      {nextIn && <p className="mt-4 text-center text-sm text-white/50">Próxima cena em <span className="font-mono text-amber-200">{nextIn}</span></p>}
+      {nextIn && <p className="mt-4 text-center text-sm text-white/50">Próximo cartaz em <span className="font-mono text-amber-200">{nextIn}</span></p>}
     </Modal>
   );
 }
@@ -123,16 +123,16 @@ export function StatsBlock({ stats, highlight }: { stats: Stats; highlight?: num
 
 export function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const steps = [
-    ["🌫️", "Cena desfocada e em preto e branco."],
-    ["🎨", "Desfoque menor, cores ativadas."],
-    ["🔍", "Sem desfoque, zoom num canto + ano de lançamento."],
-    ["🎭", "Os 3 atores principais."],
-    ["🎬", "Diretor e a primeira frase da sinopse. Última chance!"],
+    ["🔍", "Frame com zoom extremo em um detalhe do cartaz."],
+    ["📐", "Zoom reduzido — visão ampliada do detalhe."],
+    ["📅", "Plano médio do cartaz + ano de lançamento."],
+    ["🎭", "Quase todo o cartaz + 3 atores principais."],
+    ["🎬", "Cartaz quase completo + Diretor e sinopse. Última chance!"],
   ];
   return (
     <Modal open={open} onClose={onClose} title="Como jogar" id="help-modal">
       <p className="mb-4 text-sm text-white/70">
-        Descubra o <b className="text-amber-200">filme do dia</b> em até 5 palpites. A cada erro, a cena fica mais nítida e novas dicas aparecem.
+        Descubra o <b className="text-amber-200">filme do dia</b> em até 5 palpites (estilo <i>Loldle</i>). A cada palpite, a câmera se afasta revelando mais do cartaz oficial do filme e novas pistas são desbloqueadas.
       </p>
       <ol className="space-y-2">
         {steps.map(([icon, t], i) => (

@@ -4,25 +4,37 @@ import { useState } from "react";
 type Props = { src: string; stage: number; done: boolean; seed: number };
 
 /**
- * Cena obscurecida. stage = nº de erros (0..4).
- * 0: blur 50 + P&B · 1: blur 30 colorido · 2: sem blur, zoom forte num canto
- * 3: zoom médio · 4: zoom leve · done: imagem completa
+ * Cartaz obscurecido estilo Loldle. stage = nº de erros (0..4).
+ * Começa num frame com zoom extremo em um detalhe aleatório do cartaz (sem revelar o título de cara).
+ * A cada palpite errado, afasta a câmera (zoom diminui progressivamente), revelando mais do cartaz.
+ * Quando vence ou perde (done = true), revela o cartaz por completo (1x).
  */
 export default function SceneImage({ src, stage, done, seed }: Props) {
-  const [loaded, setLoaded] = useState(false); // parent usa key={src} para reiniciar
+  const [loaded, setLoaded] = useState(false);
 
-  const corners = ["15% 20%", "85% 20%", "20% 80%", "80% 75%"];
-  const origin = corners[seed % corners.length];
+  // Pontos de foco do cartaz que evitam o topo onde costuma ficar o título principal
+  const focusPoints = [
+    "50% 50%", // centro
+    "40% 40%", // centro-esquerda
+    "60% 45%", // centro-direita
+    "50% 65%", // inferior central
+    "30% 60%", // inferior esquerdo
+    "70% 60%", // inferior direito
+  ];
+  const origin = focusPoints[seed % focusPoints.length];
   const s = done ? 5 : stage;
-  const styles: Record<number, { filter: string; scale: number }> = {
-    0: { filter: "blur(50px) grayscale(1) brightness(0.75)", scale: 1.15 },
-    1: { filter: "blur(30px) saturate(1.1)", scale: 1.1 },
-    2: { filter: "none", scale: 2.8 },
-    3: { filter: "none", scale: 1.9 },
-    4: { filter: "none", scale: 1.35 },
-    5: { filter: "none", scale: 1 },
+
+  // Progressão estilo Loldle (zoom aproximado que recua a cada tentativa)
+  const styles: Record<number, { scale: number; filter: string }> = {
+    0: { scale: 3.8, filter: "none" },      // Frame 1: Zoom extremo num detalhe
+    1: { scale: 2.8, filter: "none" },      // Frame 2: Detalhe mais amplo
+    2: { scale: 2.0, filter: "none" },      // Frame 3: Meio plano
+    3: { scale: 1.45, filter: "none" },     // Frame 4: Quase todo o cartaz
+    4: { scale: 1.15, filter: "none" },     // Frame 5: Quase completo
+    5: { scale: 1, filter: "none" },        // Revelado: 100% do cartaz
   };
-  const st = styles[s];
+
+  const st = styles[s] || styles[0];
 
   return (
     <div className="scene-frame group">
@@ -30,20 +42,30 @@ export default function SceneImage({ src, stage, done, seed }: Props) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
-          alt="Cena misteriosa do filme"
+          alt="Cartaz misterioso do filme"
           draggable={false}
           onLoad={() => setLoaded(true)}
           onContextMenu={(e) => e.preventDefault()}
-          className="h-full w-full select-none object-cover transition-all duration-[1400ms] ease-[cubic-bezier(.2,.8,.2,1)]"
-          style={{ filter: st.filter, transform: `scale(${st.scale})`, transformOrigin: origin, opacity: loaded ? 1 : 0 }}
+          className="h-full w-full select-none object-cover transition-all duration-[1200ms] ease-[cubic-bezier(.2,.8,.2,1)]"
+          style={{
+            filter: st.filter,
+            transform: `scale(${st.scale})`,
+            transformOrigin: done ? "50% 50%" : origin,
+            opacity: loaded ? 1 : 0,
+          }}
         />
         {!loaded && <div className="absolute inset-0 shimmer" />}
         <div className="pointer-events-none absolute inset-0 film-grain" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
       </div>
-      <div className="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-200 backdrop-blur">
-        {done ? "Cena revelada" : `Nível ${stage + 1} / 5`}
+      <div className="absolute left-3 top-3 rounded-full bg-black/65 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-200 backdrop-blur border border-white/10 shadow-lg">
+        {done ? "Cartaz revelado" : `Zoom ${stage + 1} / 5`}
       </div>
+      {!done && (
+        <div className="absolute right-3 top-3 rounded-full bg-black/65 px-2.5 py-1 text-[11px] font-medium text-white/70 backdrop-blur border border-white/10 shadow-lg">
+          🔍 Frame do Cartaz
+        </div>
+      )}
     </div>
   );
 }

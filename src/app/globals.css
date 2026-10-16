@@ -60,8 +60,10 @@ body {
 
 .scene-frame {
   position: relative;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2 / 3;
   width: 100%;
+  max-width: 24rem;
+  margin: 0 auto;
   border-radius: 1.5rem;
   background: #111;
   box-shadow: 0 30px 80px -20px hsl(330 80% 40% / .35), 0 0 0 1px hsl(0 0% 100% / .08);

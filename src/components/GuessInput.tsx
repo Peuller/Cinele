@@ -24,7 +24,7 @@ export default function GuessInput({ disabled, shake, excluded, onGuess, onSkip 
     const ctrl = new AbortController();
     const t = setTimeout(() => {
       setLoading(true);
-      fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
+      fetch(`/cinele/api/search?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
         .then((r) => r.json())
         .then((data: MovieLite[]) => {
           setResults(data.filter((m) => !excluded.includes(m.id)));

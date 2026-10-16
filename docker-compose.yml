@@ -1,0 +1,10 @@
+services:
+  cinele:
+    build: .
+    container_name: cinele-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3200:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
