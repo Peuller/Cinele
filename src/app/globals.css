@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-outfit);
+  --font-display: var(--font-bebas);
+}
+
+@theme {
+  --animate-shake: shake 0.45s cubic-bezier(.36,.07,.19,.97);
+  --animate-pop: pop 0.28s cubic-bezier(.2,.9,.3,1.3);
+  --animate-fade: fade 0.25s ease-out;
+  --animate-fade-up: fade-up 0.45s ease-out both;
+
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(.94) translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+:root { color-scheme: dark; }
+
+body {
+  background: #07060b;
+  color: #f4f1ea;
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+/* Fundo animado */
+.bg-aurora {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(40rem 30rem at 10% -10%, hsl(330 80% 45% / .22), transparent 60%),
+    radial-gradient(40rem 30rem at 100% 0%, hsl(40 95% 55% / .16), transparent 60%),
+    radial-gradient(50rem 40rem at 50% 120%, hsl(260 70% 45% / .22), transparent 60%);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+@keyframes drift { to { filter: hue-rotate(25deg); transform: scale(1.08); } }
+
+.glass {
+  background: hsl(0 0% 100% / .05);
+  border: 1px solid hsl(0 0% 100% / .09);
+  backdrop-filter: blur(14px);
+}
+.glass-strong {
+  background: hsl(260 20% 9% / .92);
+  border: 1px solid hsl(0 0% 100% / .1);
+  backdrop-filter: blur(20px);
+}
+
+.scene-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: 1.5rem;
+  background: #111;
+  box-shadow: 0 30px 80px -20px hsl(330 80% 40% / .35), 0 0 0 1px hsl(0 0% 100% / .08);
+}
+
+.film-grain {
+  opacity: .12; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.shimmer {
+  background: linear-gradient(100deg, #15131c 30%, #221f2c 50%, #15131c 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.btn-primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+  height: 2.75rem; padding: 0 1.25rem; border-radius: .9rem;
+  font-weight: 700; color: #1a1205;
+  background: linear-gradient(135deg, #fde68a, #f59e0b 55%, #f43f5e);
+  box-shadow: 0 10px 30px -10px #f59e0b;
+  transition: transform .15s, filter .15s;
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.08); }
+.btn-primary:active:not(:disabled) { transform: scale(.97); }
+
+.btn-ghost {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 2.75rem; padding: 0 1.1rem; border-radius: .9rem;
+  font-weight: 600; color: #fff;
+  background: hsl(0 0% 100% / .08); border: 1px solid hsl(0 0% 100% / .12);
+  transition: background .15s;
+}
+.btn-ghost:hover { background: hsl(0 0% 100% / .14); }
+
+.guess-row {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .7rem 1rem; border-radius: 1rem; border: 1px solid;
+}
+.guess-wrong { background: hsl(350 80% 50% / .1); border-color: hsl(350 80% 60% / .25); color: #fecdd3; }
+.guess-close { background: hsl(42 95% 55% / .1); border-color: hsl(42 95% 60% / .3); color: #fde68a; }
+.guess-correct { background: hsl(150 70% 40% / .15); border-color: hsl(150 70% 50% / .4); color: #bbf7d0; }
+
+.hint-card {
+  padding: .9rem 1rem; border-radius: 1rem;
+  background: hsl(0 0% 100% / .03); border: 1px dashed hsl(0 0% 100% / .1);
+  transition: all .5s;
+}
+.hint-open {
+  background: linear-gradient(135deg, hsl(42 90% 55% / .1), hsl(330 80% 55% / .07));
+  border: 1px solid hsl(42 90% 60% / .25);
+}
