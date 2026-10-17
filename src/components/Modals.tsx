@@ -4,6 +4,7 @@ import Modal from "./Modal";
 import type { Stats } from "@/lib/storage";
 import type { GuessEntry, MovieLite } from "@/lib/types";
 import { MAX_ATTEMPTS } from "@/lib/types";
+import { translations, type Lang } from "@/lib/i18n";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || "cenadodia.com.br";
 
@@ -13,9 +14,10 @@ export function emojiGrid(guesses: GuessEntry[], won: boolean) {
   return { cells: cells.join(" "), score: won ? `${guesses.length}/${MAX_ATTEMPTS}` : `X/${MAX_ATTEMPTS}` };
 }
 
-export function shareText(label: string, guesses: GuessEntry[], won: boolean) {
+export function shareText(label: string, guesses: GuessEntry[], won: boolean, lang: Lang = "pt") {
   const { cells, score } = emojiGrid(guesses, won);
-  return `${label} 🎬 ${score}\n${cells}\nJogue em: ${SITE}`;
+  const playText = lang === "en" ? "Play at" : "Jogue em";
+  return `${label} 🎬 ${score}\n${cells}\n${playText}: ${SITE}`;
 }
 
 type ResultProps = {
@@ -27,12 +29,14 @@ type ResultProps = {
   label: string;
   stats: Stats | null;
   nextIn?: string;
+  lang?: Lang;
   onPlayAgain?: () => void;
 };
 
-export function ResultModal({ open, onClose, won, answer, guesses, label, stats, nextIn, onPlayAgain }: ResultProps) {
+export function ResultModal({ open, onClose, won, answer, guesses, label, stats, nextIn, lang = "pt", onPlayAgain }: ResultProps) {
+  const t = translations[lang];
   const [copied, setCopied] = useState(false);
-  const text = shareText(label, guesses, won);
+  const text = shareText(label, guesses, won, lang);
 
   const share = async () => {
     try {
@@ -46,8 +50,10 @@ export function ResultModal({ open, onClose, won, answer, guesses, label, stats,
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const displayTitle = answer ? (lang === "en" ? (answer.titleEn || answer.originalTitle || answer.title) : answer.title) : "";
+
   return (
-    <Modal open={open} onClose={onClose} title={won ? "Acertou!" : "Fim da sessão"} id="result-modal">
+    <Modal open={open} onClose={onClose} title={won ? t.wonTitle : t.lostTitle} id="result-modal">
       {answer && (
         <div className="mb-5 flex items-center gap-4 rounded-2xl bg-white/5 p-3 border border-white/5">
           {answer.poster ? (
@@ -59,8 +65,8 @@ export function ResultModal({ open, onClose, won, answer, guesses, label, stats,
             </div>
           )}
           <div>
-            <div className="text-xs uppercase tracking-[0.2em] text-white/40">{won ? "Você acertou" : "O filme era"}</div>
-            <div className="text-lg font-semibold text-white">{answer.title}</div>
+            <div className="text-xs uppercase tracking-[0.2em] text-white/40">{won ? t.youGuessed : t.theMovieWas}</div>
+            <div className="text-lg font-semibold text-white">{displayTitle}</div>
             <div className="text-sm text-white/50">{answer.year}</div>
           </div>
         </div>
@@ -71,32 +77,33 @@ export function ResultModal({ open, onClose, won, answer, guesses, label, stats,
         <div className="mt-2 text-2xl tracking-[0.2em]">{emojiGrid(guesses, won).cells}</div>
       </div>
 
-      {stats && <StatsBlock stats={stats} highlight={won ? guesses.length : undefined} />}
+      {stats && <StatsBlock stats={stats} lang={lang} highlight={won ? guesses.length : undefined} />}
 
       <div className="mt-5 flex gap-2">
         <button id="share-button" onClick={share} className="btn-primary flex-1 flex items-center justify-center gap-2">
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>
-          <span>{copied ? "Copiado!" : "Compartilhar"}</span>
+          <span>{copied ? t.copied : t.share}</span>
         </button>
         {onPlayAgain && (
           <button id="play-again" onClick={onPlayAgain} className="btn-ghost flex items-center gap-2">
             <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span>Jogar Outro</span>
+            <span>{t.playAnother}</span>
           </button>
         )}
       </div>
-      {nextIn && <p className="mt-4 text-center text-sm text-white/50">Próximo cartaz em <span className="font-mono text-white">{nextIn}</span></p>}
+      {nextIn && <p className="mt-4 text-center text-sm text-white/50">{t.nextPosterIn} <span className="font-mono text-white">{nextIn}</span></p>}
     </Modal>
   );
 }
 
-export function StatsBlock({ stats, highlight }: { stats: Stats; highlight?: number }) {
+export function StatsBlock({ stats, highlight, lang = "pt" }: { stats: Stats; highlight?: number; lang?: Lang }) {
+  const t = translations[lang];
   const max = Math.max(1, ...stats.dist);
   const items = [
-    ["Jogos", stats.played],
-    ["% Vitórias", stats.played ? Math.round((stats.wins / stats.played) * 100) : 0],
-    ["Sequência", stats.streak],
-    ["Recorde", stats.maxStreak],
+    [t.gamesPlayed, stats.played],
+    [t.winRate, stats.played ? Math.round((stats.wins / stats.played) * 100) : 0],
+    [t.streak, stats.streak],
+    [t.bestStreak, stats.maxStreak],
   ];
   return (
     <div>
@@ -125,34 +132,28 @@ export function StatsBlock({ stats, highlight }: { stats: Stats; highlight?: num
   );
 }
 
-export function HelpModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const steps = [
-    "Frame com zoom extremo em um detalhe do cartaz.",
-    "Zoom reduzido — visão ampliada do detalhe.",
-    "Plano médio do cartaz + ano de lançamento.",
-    "Quase todo o cartaz + 3 atores principais.",
-    "Cartaz quase completo + Diretor e sinopse. Última chance!",
-  ];
+export function HelpModal({ open, onClose, lang = "pt" }: { open: boolean; onClose: () => void; lang?: Lang }) {
+  const t = translations[lang];
   return (
-    <Modal open={open} onClose={onClose} title="Como jogar" id="help-modal">
+    <Modal open={open} onClose={onClose} title={t.helpTitle} id="help-modal">
       <p className="mb-4 text-sm text-white/70">
-        Descubra o <b className="text-white">filme do dia</b> em até 5 palpites. A cada palpite incorreto, o zoom se afasta revelando mais do cartaz oficial do filme e novas pistas são desbloqueadas.
+        {t.helpDesc}
       </p>
       <ol className="space-y-2">
-        {steps.map((t, i) => (
+        {t.steps.map((step, i) => (
           <li key={i} className="flex items-start gap-3 rounded-xl bg-white/5 p-2.5 text-sm text-white/80 border border-white/5">
             <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold text-white">{i + 1}</span>
-            <span>{t}</span>
+            <span>{step}</span>
           </li>
         ))}
       </ol>
       <div className="mt-4 flex flex-wrap gap-3 text-xs text-white/60">
-        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-emerald-500 inline-block"/> Acertou</span>
-        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-amber-400 inline-block"/> Ano próximo (+-3 anos)</span>
-        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-rose-500 inline-block"/> Errou</span>
+        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-emerald-500 inline-block"/> {t.legendCorrect}</span>
+        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-amber-400 inline-block"/> {t.legendClose}</span>
+        <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-sm bg-rose-500 inline-block"/> {t.legendWrong}</span>
       </div>
       <button id="help-start" onClick={onClose} className="btn-primary mt-5 w-full">
-        Começar
+        {t.startBtn}
       </button>
     </Modal>
   );

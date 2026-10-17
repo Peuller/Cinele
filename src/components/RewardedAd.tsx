@@ -40,7 +40,9 @@ export function AdsScript() {
  * Anúncio recompensado. Usa adBreak({type:'reward'}) do H5 Games Ads;
  * sem AdSense configurado (ou sem inventário), mostra um anúncio simulado de 5s.
  */
-export function useRewardedAd(onReward: () => void) {
+import { translations, type Lang } from "@/lib/i18n";
+
+export function useRewardedAd(onReward: () => void, lang: Lang = "pt") {
   const [simOpen, setSimOpen] = useState(false);
 
   const show = () => {
@@ -63,29 +65,30 @@ export function useRewardedAd(onReward: () => void) {
     } else setSimOpen(true);
   };
 
-  const modal = simOpen && <SimulatedAd open onClose={() => setSimOpen(false)} onDone={() => (setSimOpen(false), onReward())} />;
+  const modal = simOpen && <SimulatedAd open lang={lang} onClose={() => setSimOpen(false)} onDone={() => (setSimOpen(false), onReward())} />;
   return { show, modal };
 }
 
-function SimulatedAd({ open, onClose, onDone }: { open: boolean; onClose: () => void; onDone: () => void }) {
+function SimulatedAd({ open, onClose, onDone, lang = "pt" }: { open: boolean; onClose: () => void; onDone: () => void; lang?: Lang }) {
+  const t = translations[lang];
   const [left, setLeft] = useState(5);
   useEffect(() => {
-    const t = setInterval(() => setLeft((l) => Math.max(0, l - 1)), 1000);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setLeft((l) => Math.max(0, l - 1)), 1000);
+    return () => clearInterval(timer);
   }, []);
 
   return (
-    <Modal open={open} onClose={onClose} title="Espaço Publicitário" id="ad-modal">
+    <Modal open={open} onClose={onClose} title={t.adSponsored} id="ad-modal">
       <div className="relative grid aspect-video place-items-center overflow-hidden rounded-2xl border border-white/10 bg-[#16161a] p-4 text-center shadow-inner">
         <span className="absolute left-3 top-3 rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/80 border border-white/20">
-          Anúncio / AD
+          AD
         </span>
         <div className="text-center">
           <div className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-xl bg-white/10 text-white">
             <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="6 3 20 12 6 21 6 3"/></svg>
           </div>
-          <p className="mt-2 font-display text-2xl text-white">Anúncio Patrocinado</p>
-          <p className="text-xs text-white/60">Ao término deste anúncio, sua letra bônus será liberada automaticamente.</p>
+          <p className="mt-2 font-display text-2xl text-white">{t.sponsoredAd}</p>
+          <p className="text-xs text-white/60">{t.adRewardDesc}</p>
         </div>
         <div className="absolute bottom-0 left-0 h-1.5 bg-white transition-all duration-1000 ease-linear" style={{ width: `${((5 - left) / 5) * 100}%` }} />
       </div>
@@ -96,7 +99,7 @@ function SimulatedAd({ open, onClose, onDone }: { open: boolean; onClose: () => 
         className="btn-primary mt-4 flex w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-        <span>{left > 0 ? `Aguarde ${left}s para resgatar…` : "Resgatar dica bônus"}</span>
+        <span>{left > 0 ? t.waitSecondsToClaim(left) : t.claimBonusClue}</span>
       </button>
     </Modal>
   );

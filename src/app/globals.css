@@ -7,9 +7,11 @@
 
 @theme {
   --animate-shake: shake 0.45s cubic-bezier(.36,.07,.19,.97);
+  --animate-shake: shake 0.45s cubic-bezier(.36,.07,.19,.97);
   --animate-pop: pop 0.28s cubic-bezier(.2,.9,.3,1.3);
   --animate-fade: fade 0.25s ease-out;
   --animate-fade-up: fade-up 0.45s ease-out both;
+  --animate-card-flip: card-flip 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 
   @keyframes shake {
     10%, 90% { transform: translateX(-2px); }
@@ -26,6 +28,68 @@
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: none; }
   }
+  @keyframes card-flip {
+    0% { transform: rotateY(90deg) scale(0.96); opacity: 0; }
+    100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+  }
+  @keyframes clapper-open-stick {
+    0% { transform: rotate(0deg); }
+    40% { transform: rotate(-35deg); }
+    70% { transform: rotate(-38deg); }
+    90% { transform: rotate(-2deg); }
+    100% { transform: rotate(-25deg); }
+  }
+  @keyframes clapper-close-stick {
+    0% { transform: rotate(-25deg); }
+    100% { transform: rotate(0deg); }
+  }
+  @keyframes slate-open-content {
+    0% { opacity: 0; transform: scaleY(0.85) translateY(-6px); }
+    100% { opacity: 1; transform: scaleY(1) translateY(0); }
+  }
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+.clapper-stick-open {
+  transform-origin: 0% 100%;
+  transform: rotate(-18deg) translateY(-2px);
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.clapper-stick-closed {
+  transform-origin: 0% 100%;
+  transform: rotate(0deg);
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.clapper-stick-animating {
+  transform-origin: bottom left;
+  animation: clapper-open-stick 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.slate-content-open {
+  animation: slate-open-content 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Haste Clássica Preto e Branco de Claquete de Cinema */
+.clapper-stick-color {
+  background: repeating-linear-gradient(
+    -45deg,
+    #000000 0px,
+    #000000 12px,
+    #ffffff 12px,
+    #ffffff 24px
+  );
+}
+
+.clapper-stick-locked {
+  background: repeating-linear-gradient(
+    -45deg,
+    #141416 0px,
+    #141416 12px,
+    #2a2a2e 12px,
+    #2a2a2e 24px
+  );
+  opacity: 0.55;
 }
 
 :root { color-scheme: dark; }
@@ -103,10 +167,11 @@ body {
 .guess-row {
   display: flex; align-items: center; gap: .75rem;
   padding: .75rem 1rem; border-radius: .5rem; border: 1px solid;
+  transition: all .2s ease-in-out;
 }
-.guess-wrong { background: #141414; border-color: #e50914; color: #ffffff; }
-.guess-close { background: #141414; border-color: #f59e0b; color: #ffffff; }
-.guess-correct { background: #141414; border-color: #22c55e; color: #ffffff; }
+.guess-wrong { background: #b80710; border-color: #e50914; color: #ffffff; }
+.guess-close { background: #b45309; border-color: #f59e0b; color: #ffffff; }
+.guess-correct { background: #15803d; border-color: #22c55e; color: #ffffff; }
 
 .hint-card {
   padding: .9rem 1rem; border-radius: .5rem;

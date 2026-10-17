@@ -6,10 +6,12 @@ export type MovieEntry = {
   id: string;
   title: string;
   originalTitle: string;
+  titleEn?: string;
   year: number | null;
   director: string | null;
   cast: string[];
   synopsis: string | null;
+  synopsisEn?: string | null;
   poster: string | null;
   image: string;
 };
@@ -48,7 +50,7 @@ export function decodeToken(token: string): { kind: "d" | "r"; value: string } |
   try {
     const [kind, value] = xor(Buffer.from(token, "base64url").toString("binary")).split(":");
     if ((kind === "d" || kind === "r") && value) return { kind, value };
-  } catch {}
+  } catch { }
   return null;
 }
 
@@ -87,6 +89,18 @@ export function maskTitle(title: string, reveal = 0): string {
   return chars.map((c, i) => (letterIdx.includes(i) && !shown.has(i) ? "_" : c)).join("");
 }
 
+// ---------- Reveal Key para Proteção do Cartaz Completo ----------
+import crypto from "crypto";
+
+export function getRevealKey(token: string): string {
+  return crypto.createHmac("sha256", SECRET).update(`reveal:${token}`).digest("hex").slice(0, 16);
+}
+
+export function verifyRevealKey(token: string, key?: string | null): boolean {
+  if (!key) return false;
+  return getRevealKey(token) === key;
+}
+
 // ---------- Montagem do Desafio ----------
 export async function buildPuzzle(opts: { date?: string; random?: boolean }): Promise<Puzzle> {
   let id: string, token: string, mode: Puzzle["mode"], date: string | null = null;
@@ -102,17 +116,20 @@ export async function buildPuzzle(opts: { date?: string; random?: boolean }): Pr
   }
 
   const m = getMovieById(id);
+  const titleEn = m.titleEn || m.originalTitle || m.title;
   return {
     token,
     mode,
     date,
     number: date ? dayNumber(date) : null,
-    image: m.image,
+    image: `/api/frame?token=${token}&s=0`,
     year: m.year,
     cast: m.cast,
     director: m.director,
     synopsis: m.synopsis,
+    synopsisEn: m.synopsisEn || m.synopsis,
     mask: maskTitle(m.title),
+    maskEn: maskTitle(titleEn),
     demo: false,
   };
 }
@@ -122,7 +139,15 @@ export async function getAnswer(token: string): Promise<MovieLite | null> {
   const id = await resolveMovieId(token);
   if (!id) return null;
   const m = getMovieById(id);
-  return { id: m.id, title: m.title, originalTitle: m.originalTitle, year: m.year, poster: m.poster };
+  const rKey = getRevealKey(token);
+  return {
+    id: m.id,
+    title: m.title,
+    originalTitle: m.originalTitle,
+    titleEn: m.titleEn || m.originalTitle || m.title,
+    year: m.year,
+    poster: `/api/frame?token=${token}&s=5&k=${rKey}`,
+  };
 }
 
 export async function checkGuess(token: string, guessId: string, guessYear: number | null): Promise<GuessResult> {
@@ -146,12 +171,18 @@ export async function searchMovies(q: string): Promise<MovieLite[]> {
 
   const nq = norm(query);
 
-  const matched = MOVIES.filter((m) => norm(m.title).includes(nq) || norm(m.originalTitle || "").includes(nq));
+  const matched = MOVIES.filter(
+    (m) =>
+      norm(m.title).includes(nq) ||
+      norm(m.originalTitle || "").includes(nq) ||
+      norm(m.titleEn || "").includes(nq)
+  );
 
   return matched.slice(0, 8).map((m) => ({
     id: m.id,
     title: m.title,
     originalTitle: m.originalTitle,
+    titleEn: m.titleEn || m.originalTitle || m.title,
     year: m.year,
     poster: m.poster,
   }));

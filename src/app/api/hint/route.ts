@@ -7,5 +7,9 @@ export async function POST(req: Request) {
   const answer = token ? await getAnswer(token) : null;
   if (!answer) return NextResponse.json({ error: "Token inválido" }, { status: 400 });
   const n = Math.max(0, Math.min(Number(reveal) || 0, 6));
-  return NextResponse.json({ mask: maskTitle(answer.title, n) });
+  const titleEn = answer.titleEn || answer.originalTitle || answer.title;
+  return NextResponse.json({
+    mask: maskTitle(answer.title, n),
+    maskEn: maskTitle(titleEn, n),
+  });
 }

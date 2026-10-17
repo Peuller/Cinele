@@ -7,6 +7,7 @@ export type GameState = {
   answer?: MovieLite;
   reveal: number; // letras reveladas via anúncio
   mask?: string;
+  maskEn?: string;
 };
 
 export type Stats = {
