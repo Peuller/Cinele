@@ -56,14 +56,15 @@ export default function SceneImage({ src, stage, done, seed }: Props) {
         />
         {!loaded && <div className="absolute inset-0 shimmer" />}
         <div className="pointer-events-none absolute inset-0 film-grain" />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+        <div className="pointer-events-none absolute inset-0 bg-black/20" />
       </div>
-      <div className="absolute left-3 top-3 rounded-full bg-black/65 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-200 backdrop-blur border border-white/10 shadow-lg">
+      <div className="absolute left-3 top-3 rounded-full bg-black/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white backdrop-blur border border-white/10 shadow-lg">
         {done ? "Cartaz revelado" : `Zoom ${stage + 1} / 5`}
       </div>
       {!done && (
-        <div className="absolute right-3 top-3 rounded-full bg-black/65 px-2.5 py-1 text-[11px] font-medium text-white/70 backdrop-blur border border-white/10 shadow-lg">
-          🔍 Frame do Cartaz
+        <div className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-black/80 px-2.5 py-1 text-[11px] font-medium text-white/80 backdrop-blur border border-white/10 shadow-lg">
+          <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Frame do Cartaz</span>
         </div>
       )}
     </div>

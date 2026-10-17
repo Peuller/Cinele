@@ -75,25 +75,28 @@ function SimulatedAd({ open, onClose, onDone }: { open: boolean; onClose: () => 
   }, []);
 
   return (
-    <Modal open={open} onClose={onClose} title="📢 Espaço Publicitário" id="ad-modal">
-      <div className="relative grid aspect-video place-items-center overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-fuchsia-950/60 via-purple-900/40 to-black p-4 text-center shadow-inner">
-        <span className="absolute left-3 top-3 rounded bg-amber-400/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30">
+    <Modal open={open} onClose={onClose} title="Espaço Publicitário" id="ad-modal">
+      <div className="relative grid aspect-video place-items-center overflow-hidden rounded-2xl border border-white/10 bg-[#16161a] p-4 text-center shadow-inner">
+        <span className="absolute left-3 top-3 rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/80 border border-white/20">
           Anúncio / AD
         </span>
         <div className="text-center">
-          <div className="text-5xl animate-bounce">🍿</div>
+          <div className="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-xl bg-white/10 text-white">
+            <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+          </div>
           <p className="mt-2 font-display text-2xl text-white">Anúncio Patrocinado</p>
           <p className="text-xs text-white/60">Ao término deste anúncio, sua letra bônus será liberada automaticamente.</p>
         </div>
-        <div className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-amber-400 to-rose-500 transition-all duration-1000 ease-linear" style={{ width: `${((5 - left) / 5) * 100}%` }} />
+        <div className="absolute bottom-0 left-0 h-1.5 bg-white transition-all duration-1000 ease-linear" style={{ width: `${((5 - left) / 5) * 100}%` }} />
       </div>
       <button
         id="claim-reward"
         disabled={left > 0}
         onClick={onDone}
-        className="btn-primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-50"
+        className="btn-primary mt-4 flex w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {left > 0 ? `Aguarde ${left}s para resgatar…` : "Resgatar dica bônus 🎁"}
+        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        <span>{left > 0 ? `Aguarde ${left}s para resgatar…` : "Resgatar dica bônus"}</span>
       </button>
     </Modal>
   );

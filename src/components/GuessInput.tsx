@@ -82,9 +82,9 @@ export default function GuessInput({ disabled, shake, excluded, onGuess, onSkip 
             }}
             placeholder={disabled ? "Fim de jogo" : "Qual é o filme? Digite para buscar…"}
             autoComplete="off"
-            className="glass h-14 w-full rounded-2xl pl-12 pr-10 text-base text-white placeholder:text-white/35 outline-none transition focus:ring-2 focus:ring-amber-400/60 disabled:opacity-50"
+            className="glass h-14 w-full rounded-2xl pl-12 pr-10 text-base text-white placeholder:text-white/35 outline-none transition focus:ring-2 focus:ring-[#e50914] disabled:opacity-50"
           />
-          {loading && <span className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin rounded-full border-2 border-amber-300 border-t-transparent" />}
+          {loading && <span className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin rounded-full border-2 border-[#e50914] border-t-transparent" />}
         </div>
         <button
           id="skip-button"
@@ -105,13 +105,15 @@ export default function GuessInput({ disabled, shake, excluded, onGuess, onSkip 
                 id={`result-${m.id}`}
                 onMouseEnter={() => setActive(i)}
                 onClick={() => choose(m)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition ${i === active ? "bg-amber-400/15" : ""}`}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition ${i === active ? "bg-white/10 text-white border-l-2 border-[#e50914]" : ""}`}
               >
                 {m.poster ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={m.poster} alt="" className="h-12 w-8 rounded object-cover" />
                 ) : (
-                  <div className="grid h-12 w-8 place-items-center rounded bg-white/10 text-sm">🎬</div>
+                  <div className="grid h-12 w-8 place-items-center rounded bg-white/10 text-white/50">
+                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/></svg>
+                  </div>
                 )}
                 <div className="min-w-0">
                   <div className="truncate font-medium text-white">{m.title}</div>

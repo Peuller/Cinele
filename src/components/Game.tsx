@@ -120,7 +120,7 @@ export default function Game() {
       if (!won) {
         setShake(true);
         setTimeout(() => setShake(false), 500);
-        if (!lost) flash(data.result === "close" ? "🟨 Quase! O ano é próximo." : "🟥 Não é esse… o cartaz abriu mais!");
+        if (!lost) flash(data.result === "close" ? "Quase! O ano é próximo." : "Não é esse… o cartaz abriu mais!");
       }
       if (won) celebrate();
       if (won || lost) {
@@ -153,7 +153,7 @@ export default function Game() {
     });
     const { mask } = await res.json();
     update({ ...game, reveal: game.reveal + 1, mask });
-    flash("🎁 Letra revelada!");
+    flash("Letra revelada!");
   };
   const ad = useRewardedAd(grantLetter);
 
@@ -173,18 +173,20 @@ export default function Game() {
       {/* Banner Lateral Esquerdo (Desktop / Skyscraper) */}
       {!auth.premium && (
         <aside className="sticky top-16 hidden h-[600px] w-40 xl:flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-3 text-center text-white/40 mr-6 mt-4 backdrop-blur-sm shrink-0">
-          <span className="rounded bg-amber-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30 mb-2">
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white/70 border border-white/10 mb-2">
             AD · Publicidade
           </span>
-          <div className="text-3xl mb-1">📢</div>
-          <span className="text-xs font-semibold text-white/60">Espaço de Anúncio</span>
+          <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-white/5 text-white/50">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          </div>
+          <span className="text-xs font-semibold text-white/70">Espaço de Anúncio</span>
           <span className="text-[10px] text-white/30 mt-1">160 x 600</span>
           <div className="mt-4 border-t border-white/5 pt-3 w-full">
             <button
               onClick={() => setModal("premium")}
-              className="text-[10px] text-amber-300/80 hover:text-amber-200 underline"
+              className="text-[10px] text-white/70 hover:text-white underline"
             >
-              Remover anúncios com VIP 👑
+              Remover anúncios com VIP
             </button>
           </div>
         </aside>
@@ -192,19 +194,18 @@ export default function Game() {
 
       {/* Conteúdo Central do Jogo */}
       <div className="relative flex w-full max-w-3xl flex-1 flex-col">
-      {/* Header Compacto */}
-      <header className="sticky top-0 z-40 -mx-4 mb-2 flex items-center justify-between border-b border-white/5 bg-[#07060b]/85 px-4 py-1.5 backdrop-blur-xl">
-        <button id="home-button" onClick={() => setMode({ kind: "daily" })} className="group flex items-center gap-2 transition">
-          <div className="relative grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-amber-400 via-rose-500 to-purple-600 shadow-md shadow-rose-500/20 transition duration-300 group-hover:scale-105">
-            <span className="text-base">🎞️</span>
-            <div className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/20" />
+      {/* Header Compacto Estilo Cinema */}
+      <header className="sticky top-0 z-40 -mx-4 mb-3 flex items-center justify-between border-b border-white/10 bg-black/90 px-4 py-2.5 backdrop-blur-md">
+        <button id="home-button" onClick={() => setMode({ kind: "daily" })} className="group flex items-center gap-2.5 transition">
+          <div className="grid h-8 w-8 place-items-center rounded bg-[#e50914] text-white font-black shadow-md shadow-[#e50914]/20 transition group-hover:scale-105">
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 3v2h2V7H4zm0 4v2h2v-2H4zm0 4v2h2v-2H4zm14-8v2h2V7h-2zm0 4v2h2v-2h-2zm0 4v2h2v-2h-2zM8 7h8v10H8V7z"/></svg>
           </div>
-          <div className="flex items-baseline gap-1.5 text-left">
-            <h1 className="font-display text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-rose-400">
+          <div className="flex items-baseline gap-2 text-left">
+            <h1 className="font-display text-3xl font-black tracking-widest text-[#e50914] uppercase drop-shadow-sm">
               CINELE
             </h1>
-            <span className="hidden sm:inline-block text-[9px] font-semibold uppercase tracking-[0.2em] text-white/35">
-              Diário
+            <span className="hidden sm:inline-block text-[9px] font-bold tracking-[0.25em] text-white/40 uppercase">
+              Cinema Daily
             </span>
           </div>
         </button>
@@ -213,34 +214,30 @@ export default function Game() {
           <button
             id="help-open"
             onClick={() => setModal("help")}
-            className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 backdrop-blur transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-1.5 rounded border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
             title="Como jogar"
           >
-            <span className="text-xs">❓</span>
+            <svg className="h-3.5 w-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
             <span className="hidden sm:inline text-xs">Ajuda</span>
           </button>
 
           <button
             id="stats-open"
             onClick={() => setModal("stats")}
-            className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 backdrop-blur transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+            className="flex items-center gap-1.5 rounded border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 transition hover:border-white/30 hover:bg-white/10 hover:text-white"
             title="Estatísticas"
           >
-            <span className="text-xs">📊</span>
+            <svg className="h-3.5 w-3.5 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
             <span className="hidden sm:inline text-xs">Stats</span>
           </button>
 
           <button
             id="premium-open"
             onClick={() => setModal("premium")}
-            className="relative group overflow-hidden rounded-lg bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 p-[1px] shadow-[0_0_15px_-3px_rgba(245,158,11,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_1px_rgba(251,191,36,0.7)]"
+            className="flex items-center gap-1.5 rounded bg-[#e50914] px-3 py-1 text-[11px] font-black tracking-wider text-white transition hover:bg-[#b80710] sm:text-xs"
           >
-            <div className="relative flex items-center gap-1 rounded-[7px] bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 px-2.5 py-1 text-[11px] font-black tracking-wider text-black sm:text-xs">
-              <span className="text-xs animate-bounce">👑</span>
-              <span>{auth.premium ? "ÁREA VIP" : "VIRAR VIP"}</span>
-            </div>
-            {/* Efeito shimmer metálico */}
-            <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
+            <svg className="h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>{auth.premium ? "ÁREA VIP" : "ASSINAR VIP"}</span>
           </button>
 
           {auth.configured &&
@@ -255,7 +252,7 @@ export default function Game() {
                 {auth.user.user_metadata?.avatar_url ? (
                   <img src={auth.user.user_metadata.avatar_url} alt="" className="h-5 w-5 rounded-full" />
                 ) : (
-                  <span>👤</span>
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 )}
                 <span className="hidden md:inline">Sair</span>
               </button>
@@ -265,7 +262,7 @@ export default function Game() {
                 onClick={auth.signIn}
                 className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
               >
-                <span>👤</span>
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span className="hidden md:inline">Entrar</span>
               </button>
             ))}
@@ -275,7 +272,7 @@ export default function Game() {
       {/* Subheader Compacto */}
       <div className="mb-2 flex items-center justify-between">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300/80 mr-2">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50 mr-2">
             {puzzle?.mode === "infinite" ? "Infinito" : puzzle?.mode === "archive" ? "Arquivo" : "Diário"}
           </span>
           <span className="text-base font-bold text-white">
@@ -302,7 +299,7 @@ export default function Game() {
             <h2 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center justify-center gap-1.5">
               De qual filme é este cartaz?
             </h2>
-            <p className="text-[11px] font-medium text-amber-200/70">
+            <p className="text-[11px] font-medium text-white/50">
               O zoom se afasta e revela mais detalhes a cada tentativa incorreta.
             </p>
           </div>
@@ -327,11 +324,10 @@ export default function Game() {
             <ul className="space-y-2">
               {game.guesses.map((g, i) => (
                 <li key={g.id} className={`guess-row guess-${g.result} animate-fade-up`} style={{ animationDelay: `${i * 40}ms` }}>
-                  <span className="flex items-center gap-1.5 font-semibold text-xs text-white/60 bg-black/30 px-2 py-1 rounded-md border border-white/5">
+                  <span className="flex items-center gap-1.5 font-semibold text-xs text-white/60 bg-black/40 px-2 py-1 rounded-md border border-white/5">
                     {ordinalLabels[i] || `${i + 1}º`}
                   </span>
-                  <span className="text-lg">{g.result === "correct" ? "🟩" : g.result === "close" ? "🟨" : "🟥"}</span>
-                  <span className="flex-1 truncate font-medium">{g.title}</span>
+                  <span className="flex-1 truncate font-medium text-white">{g.title}</span>
                   {g.year && <span className="text-sm opacity-60">({g.year})</span>}
                 </li>
               ))}
@@ -343,8 +339,8 @@ export default function Game() {
           {!done && game.reveal < 6 && (
             <div className="pt-2">
               <div className="flex items-center justify-between mb-1.5 px-1">
-                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-300/60">
-                  <span className="rounded bg-amber-400/20 px-1 py-0.2 border border-amber-400/30 text-[9px] text-amber-200">AD</span>
+                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/60">
+                  <span className="rounded bg-white/10 px-1 py-0.2 border border-white/20 text-[9px] text-white">AD</span>
                   Espaço Publicitário
                 </span>
                 <span className="text-[10px] text-white/40">Dica bônus</span>
@@ -352,9 +348,9 @@ export default function Game() {
               <button
                 id="extra-hint"
                 onClick={() => (auth.premium && auth.configured ? grantLetter() : ad.show())}
-                className="group flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-amber-400/40 bg-amber-400/5 py-3 text-sm font-semibold text-amber-200 transition hover:border-amber-400/80 hover:bg-amber-400/10 shadow-sm"
+                className="group flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/5 py-3 text-sm font-semibold text-white/90 transition hover:border-white/40 hover:bg-white/10 shadow-sm"
               >
-                <span className="transition group-hover:scale-125">📺</span>
+                <svg className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
                 <span>{auth.premium && auth.configured ? "Revelar uma letra do título (VIP)" : "Assistir Anúncio Patrocinado para Revelar Letra"}</span>
               </button>
             </div>
@@ -363,7 +359,7 @@ export default function Game() {
       )}
 
       <footer className="mt-10 text-center text-xs text-white/30">
-        Dados e imagens: <a className="underline hover:text-white/60" href="https://www.themoviedb.org" target="_blank" rel="noreferrer">TMDB</a>. Este produto usa a API do TMDB, mas não é endossado nem certificado pelo TMDB.
+        Dados e imagens locais. Todos os direitos reservados.
       </footer>
 
       {toast && (
@@ -373,7 +369,7 @@ export default function Game() {
       <HelpModal open={modal === "help"} onClose={() => (markHelp(), setModal(null))} />
       <Modal open={modal === "stats"} onClose={() => setModal(null)} title="Estatísticas" id="stats-modal">
         {stats && <StatsBlock stats={stats} />}
-        <p className="mt-4 text-center text-sm text-white/50">Próximo cartaz em <span className="font-mono text-amber-200">{countdown}</span></p>
+        <p className="mt-4 text-center text-sm text-white/50">Próximo cartaz em <span className="font-mono text-white font-bold">{countdown}</span></p>
       </Modal>
       {game && puzzle && (
         <ResultModal
@@ -406,18 +402,20 @@ export default function Game() {
       {/* Banner Lateral Direito (Desktop / Skyscraper) */}
       {!auth.premium && (
         <aside className="sticky top-16 hidden h-[600px] w-40 xl:flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-3 text-center text-white/40 ml-6 mt-4 backdrop-blur-sm shrink-0">
-          <span className="rounded bg-amber-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30 mb-2">
+          <span className="rounded bg-white/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white/70 border border-white/10 mb-2">
             AD · Publicidade
           </span>
-          <div className="text-3xl mb-1">🍿</div>
-          <span className="text-xs font-semibold text-white/60">Espaço de Anúncio</span>
+          <div className="mb-2 grid h-10 w-10 place-items-center rounded-full bg-white/5 text-white/50">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          </div>
+          <span className="text-xs font-semibold text-white/70">Espaço de Anúncio</span>
           <span className="text-[10px] text-white/30 mt-1">160 x 600</span>
           <div className="mt-4 border-t border-white/5 pt-3 w-full">
             <button
               onClick={() => setModal("premium")}
-              className="text-[10px] text-amber-300/80 hover:text-amber-200 underline"
+              className="text-[10px] text-white/70 hover:text-white underline"
             >
-              Remover anúncios com VIP 👑
+              Remover anúncios com VIP
             </button>
           </div>
         </aside>
@@ -439,9 +437,9 @@ function Attempts({ guesses }: { guesses: GuessEntry[] }) {
   return (
     <div className="flex flex-col items-end gap-1" aria-label="Tentativas">
       <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-white/50">
-        <span>🎯</span>
+        <svg className="h-3.5 w-3.5 text-white/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         <span>Tentativas</span>
-        <span className="font-mono text-amber-300 font-bold">
+        <span className="font-mono text-white font-bold">
           {count}/{MAX_ATTEMPTS}
         </span>
       </div>
@@ -451,11 +449,11 @@ function Attempts({ guesses }: { guesses: GuessEntry[] }) {
           const c = !g
             ? "bg-white/10"
             : g.result === "correct"
-              ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"
+              ? "bg-emerald-400"
               : g.result === "close"
-                ? "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]"
-                : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]";
-          return <span key={i} className={`h-2 w-5 rounded-full transition-all duration-500 ${c}`} />;
+                ? "bg-amber-400"
+                : "bg-rose-500";
+          return <span key={i} className={`h-2 w-5 rounded-full transition-all duration-300 ${c}`} />;
         })}
       </div>
     </div>

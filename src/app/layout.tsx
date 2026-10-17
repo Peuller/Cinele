@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "Estilo Loldle para o cinema: descubra o filme do dia a partir de um frame do cartaz em até 5 palpites. Novo desafio todo dia!",
   openGraph: {
-    title: "Cinele 🎬",
+    title: "Cinele",
     description: "Adivinhe o filme do dia pelo cartaz. Você consegue em 1 palpite?",
     locale: "pt_BR",
     type: "website",
