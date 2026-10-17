@@ -13,7 +13,22 @@ export default function HintPanel({ puzzle, stage, done, mask }: Props) {
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 pt-4">
+      {/* Divisor e cabeçalho bem evidente da seção de dicas */}
+      <div className="relative flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <div className="w-full border-t border-dashed border-amber-300/25" />
+        </div>
+        <div className="relative flex items-center gap-2 rounded-full border border-amber-400/30 bg-[#0e0c15] px-4 py-1.5 shadow-lg shadow-black/50">
+          <span className="text-base animate-pulse">💡</span>
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-200">
+            Dicas Desbloqueáveis
+          </span>
+          <span className="rounded-full bg-amber-400/15 px-2 py-0.5 text-[10px] font-semibold text-amber-300">
+            {done ? "Reveladas" : `${Math.max(0, stage)} / 4 abertas`}
+          </span>
+        </div>
+      </div>
       {mask && (
         <div className="glass rounded-2xl px-4 py-3 text-center">
           <div className="mb-1 text-[10px] uppercase tracking-[0.25em] text-white/40">Título</div>

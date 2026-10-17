@@ -75,14 +75,17 @@ function SimulatedAd({ open, onClose, onDone }: { open: boolean; onClose: () => 
   }, []);
 
   return (
-    <Modal open={open} onClose={onClose} title="Patrocinado" id="ad-modal">
-      <div className="relative grid aspect-video place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-fuchsia-600/40 via-indigo-700/40 to-amber-500/30">
+    <Modal open={open} onClose={onClose} title="📢 Espaço Publicitário" id="ad-modal">
+      <div className="relative grid aspect-video place-items-center overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-fuchsia-950/60 via-purple-900/40 to-black p-4 text-center shadow-inner">
+        <span className="absolute left-3 top-3 rounded bg-amber-400/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30">
+          Anúncio / AD
+        </span>
         <div className="text-center">
-          <div className="text-5xl">🍿</div>
-          <p className="mt-2 font-display text-2xl text-white">Seu anúncio aqui</p>
-          <p className="text-xs text-white/60">Anúncio simulado (configure NEXT_PUBLIC_ADSENSE_CLIENT)</p>
+          <div className="text-5xl animate-bounce">🍿</div>
+          <p className="mt-2 font-display text-2xl text-white">Anúncio Patrocinado</p>
+          <p className="text-xs text-white/60">Ao término deste anúncio, sua letra bônus será liberada automaticamente.</p>
         </div>
-        <div className="absolute bottom-0 left-0 h-1 bg-amber-400 transition-all duration-1000 ease-linear" style={{ width: `${((5 - left) / 5) * 100}%` }} />
+        <div className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-amber-400 to-rose-500 transition-all duration-1000 ease-linear" style={{ width: `${((5 - left) / 5) * 100}%` }} />
       </div>
       <button
         id="claim-reward"
@@ -90,7 +93,7 @@ function SimulatedAd({ open, onClose, onDone }: { open: boolean; onClose: () => 
         onClick={onDone}
         className="btn-primary mt-4 w-full disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {left > 0 ? `Aguarde ${left}s…` : "Resgatar dica 🎁"}
+        {left > 0 ? `Aguarde ${left}s para resgatar…` : "Resgatar dica bônus 🎁"}
       </button>
     </Modal>
   );

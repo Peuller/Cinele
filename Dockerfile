@@ -20,8 +20,9 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/src ./src
 COPY --from=builder /app/next.config.ts ./
 
 EXPOSE 3000
 
-CMD ["npx", "next", "start", "-p", "3000"]
+CMD ["npx", "next", "start", "-H", "0.0.0.0", "-p", "3000"]

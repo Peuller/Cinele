@@ -59,7 +59,7 @@ export default function Game() {
       setGame(null);
       const qs = m.kind === "archive" ? `?date=${m.date}` : m.kind === "infinite" ? "?random=1" : "";
       try {
-        const res = await fetch(`/cinele/api/puzzle${qs}`, { headers: authHeaders(auth.session) });
+        const res = await fetch(`/api/puzzle${qs}`, { headers: authHeaders(auth.session) });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Erro ao carregar");
         const p = data as Puzzle;
@@ -101,7 +101,7 @@ export default function Game() {
     setBusy(true);
     const attempt = game.guesses.length + 1;
     try {
-      const res = await fetch("/cinele/api/guess", {
+      const res = await fetch("/api/guess", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: puzzle.token, guessId: m?.id ?? "skip", guessYear: m?.year ?? null, attempt }),
@@ -146,7 +146,7 @@ export default function Game() {
 
   const grantLetter = async () => {
     if (!puzzle || !game) return;
-    const res = await fetch("/cinele/api/hint", {
+    const res = await fetch("/api/hint", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: puzzle.token, reveal: game.reveal + 1 }),
@@ -166,57 +166,125 @@ export default function Game() {
       : `Cartaz do Dia #${puzzle.number}`
     : "";
 
+  const ordinalLabels = ["1º", "2º", "3º", "4º", "5º"];
+
   return (
-    <div className="relative mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-10">
-      {/* Header */}
-      <header className="sticky top-0 z-40 -mx-4 mb-4 flex items-center justify-between border-b border-white/5 bg-[#07060b]/70 px-4 py-3 backdrop-blur-xl">
-        <button id="home-button" onClick={() => setMode({ kind: "daily" })} className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-amber-300 to-rose-500 text-lg shadow-lg shadow-rose-500/30">🎬</span>
-          <h1 className="font-display text-3xl leading-none tracking-wider text-white">
-            CENA<span className="text-amber-300">DO</span>DIA
-          </h1>
+    <div className="relative mx-auto flex w-full max-w-7xl flex-1 justify-center px-4 pb-6">
+      {/* Banner Lateral Esquerdo (Desktop / Skyscraper) */}
+      {!auth.premium && (
+        <aside className="sticky top-16 hidden h-[600px] w-40 xl:flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-3 text-center text-white/40 mr-6 mt-4 backdrop-blur-sm shrink-0">
+          <span className="rounded bg-amber-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30 mb-2">
+            AD · Publicidade
+          </span>
+          <div className="text-3xl mb-1">📢</div>
+          <span className="text-xs font-semibold text-white/60">Espaço de Anúncio</span>
+          <span className="text-[10px] text-white/30 mt-1">160 x 600</span>
+          <div className="mt-4 border-t border-white/5 pt-3 w-full">
+            <button
+              onClick={() => setModal("premium")}
+              className="text-[10px] text-amber-300/80 hover:text-amber-200 underline"
+            >
+              Remover anúncios com VIP 👑
+            </button>
+          </div>
+        </aside>
+      )}
+
+      {/* Conteúdo Central do Jogo */}
+      <div className="relative flex w-full max-w-3xl flex-1 flex-col">
+      {/* Header Compacto */}
+      <header className="sticky top-0 z-40 -mx-4 mb-2 flex items-center justify-between border-b border-white/5 bg-[#07060b]/85 px-4 py-1.5 backdrop-blur-xl">
+        <button id="home-button" onClick={() => setMode({ kind: "daily" })} className="group flex items-center gap-2 transition">
+          <div className="relative grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-amber-400 via-rose-500 to-purple-600 shadow-md shadow-rose-500/20 transition duration-300 group-hover:scale-105">
+            <span className="text-base">🎞️</span>
+            <div className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/20" />
+          </div>
+          <div className="flex items-baseline gap-1.5 text-left">
+            <h1 className="font-display text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-rose-400">
+              CINELE
+            </h1>
+            <span className="hidden sm:inline-block text-[9px] font-semibold uppercase tracking-[0.2em] text-white/35">
+              Diário
+            </span>
+          </div>
         </button>
-        <nav className="flex items-center gap-1">
-          <IconBtn id="help-open" label="Como jogar" onClick={() => setModal("help")}>?</IconBtn>
-          <IconBtn id="stats-open" label="Estatísticas" onClick={() => setModal("stats")}>📊</IconBtn>
+
+        <nav className="flex items-center gap-1.5">
+          <button
+            id="help-open"
+            onClick={() => setModal("help")}
+            className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 backdrop-blur transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+            title="Como jogar"
+          >
+            <span className="text-xs">❓</span>
+            <span className="hidden sm:inline text-xs">Ajuda</span>
+          </button>
+
+          <button
+            id="stats-open"
+            onClick={() => setModal("stats")}
+            className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 backdrop-blur transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+            title="Estatísticas"
+          >
+            <span className="text-xs">📊</span>
+            <span className="hidden sm:inline text-xs">Stats</span>
+          </button>
+
           <button
             id="premium-open"
             onClick={() => setModal("premium")}
-            className="ml-1 rounded-full bg-gradient-to-r from-amber-300 to-amber-500 px-3 py-1.5 text-xs font-bold text-black shadow-lg shadow-amber-500/30 transition hover:scale-105"
+            className="relative group overflow-hidden rounded-lg bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 p-[1px] shadow-[0_0_15px_-3px_rgba(245,158,11,0.5)] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_20px_1px_rgba(251,191,36,0.7)]"
           >
-            {auth.premium ? "📚 Arquivo" : "⭐ Premium"}
+            <div className="relative flex items-center gap-1 rounded-[7px] bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 px-2.5 py-1 text-[11px] font-black tracking-wider text-black sm:text-xs">
+              <span className="text-xs animate-bounce">👑</span>
+              <span>{auth.premium ? "ÁREA VIP" : "VIRAR VIP"}</span>
+            </div>
+            {/* Efeito shimmer metálico */}
+            <div className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
           </button>
+
           {auth.configured &&
             (auth.user ? (
-              <IconBtn id="signout" label="Sair" onClick={auth.signOut}>
+              <button
+                id="signout"
+                onClick={auth.signOut}
+                title="Sair"
+                className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+              >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                {auth.user.user_metadata?.avatar_url ? <img src={auth.user.user_metadata.avatar_url} alt="" className="h-7 w-7 rounded-full" /> : "👤"}
-              </IconBtn>
+                {auth.user.user_metadata?.avatar_url ? (
+                  <img src={auth.user.user_metadata.avatar_url} alt="" className="h-5 w-5 rounded-full" />
+                ) : (
+                  <span>👤</span>
+                )}
+                <span className="hidden md:inline">Sair</span>
+              </button>
             ) : (
-              <IconBtn id="signin" label="Entrar" onClick={auth.signIn}>👤</IconBtn>
+              <button
+                id="signin"
+                onClick={auth.signIn}
+                className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-semibold text-white/80 transition hover:bg-white/10 hover:text-white"
+              >
+                <span>👤</span>
+                <span className="hidden md:inline">Entrar</span>
+              </button>
             ))}
         </nav>
       </header>
 
-      {/* Subheader */}
-      <div className="mb-3 flex items-end justify-between">
+      {/* Subheader Compacto */}
+      <div className="mb-2 flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-300/80">
-            {puzzle?.mode === "infinite" ? "Modo infinito" : puzzle?.mode === "archive" ? "Arquivo" : "Desafio diário"}
-          </div>
-          <div className="text-2xl font-bold text-white">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300/80 mr-2">
+            {puzzle?.mode === "infinite" ? "Infinito" : puzzle?.mode === "archive" ? "Arquivo" : "Diário"}
+          </span>
+          <span className="text-base font-bold text-white">
             {label || "Carregando…"}
-            {puzzle?.date && <span className="ml-2 text-base font-normal text-white/40">{fmtDate(puzzle.date)}</span>}
-          </div>
+            {puzzle?.date && <span className="ml-1.5 text-xs font-normal text-white/40">({fmtDate(puzzle.date)})</span>}
+          </span>
         </div>
         <Attempts guesses={game?.guesses ?? []} />
       </div>
-
-      {puzzle?.demo && (
-        <div className="mb-3 rounded-xl border border-amber-300/20 bg-amber-300/5 px-3 py-2 text-xs text-amber-100/80">
-          ⚙️ Modo demonstração offline — adicione <code className="text-amber-200">TMDB_API_KEY</code> no <code>.env.local</code> para usar filmes reais.
-        </div>
-      )}
 
       {error && (
         <div className="glass rounded-2xl p-6 text-center">
@@ -228,28 +296,43 @@ export default function Game() {
       {!puzzle && !error && <div className="scene-frame shimmer" />}
 
       {puzzle && game && (
-        <main className="space-y-4">
+        <main className="space-y-3">
+          {/* Chamada intuitiva do jogo */}
+          <div className="text-center pt-0.5">
+            <h2 className="text-base sm:text-lg font-bold tracking-tight text-white flex items-center justify-center gap-1.5">
+              De qual filme é este cartaz?
+            </h2>
+            <p className="text-[11px] font-medium text-amber-200/70">
+              O zoom se afasta e revela mais detalhes a cada tentativa incorreta.
+            </p>
+          </div>
+
           <SceneImage key={puzzle.image} src={puzzle.image} stage={stage} done={done} seed={puzzle.number ?? puzzle.token.length} />
 
-          {done ? (
-            <div className="glass flex items-center justify-between gap-3 rounded-2xl p-4 animate-fade-up">
-              <div>
-                <div className="text-xs uppercase tracking-[0.2em] text-white/40">{game.status === "won" ? "Você acertou!" : "Era…"}</div>
-                <div className="text-lg font-semibold text-white">{game.answer?.title} <span className="text-white/40">({game.answer?.year})</span></div>
+          <div className="pt-3">
+            {done ? (
+              <div className="glass flex items-center justify-between gap-3 rounded-2xl p-4 animate-fade-up">
+                <div>
+                  <div className="text-xs uppercase tracking-[0.2em] text-white/40">{game.status === "won" ? "Você acertou!" : "Era…"}</div>
+                  <div className="text-lg font-semibold text-white">{game.answer?.title} <span className="text-white/40">({game.answer?.year})</span></div>
+                </div>
+                <button id="show-result" className="btn-primary" onClick={() => setModal("result")}>Resultado</button>
               </div>
-              <button id="show-result" className="btn-primary" onClick={() => setModal("result")}>Resultado</button>
-            </div>
-          ) : (
-            <GuessInput disabled={busy} shake={shake} excluded={game.guesses.map((g) => g.id)} onGuess={submit} onSkip={() => submit(null)} />
-          )}
+            ) : (
+              <GuessInput disabled={busy} shake={shake} excluded={game.guesses.map((g) => g.id)} onGuess={submit} onSkip={() => submit(null)} />
+            )}
+          </div>
 
           {game.guesses.length > 0 && (
             <ul className="space-y-2">
               {game.guesses.map((g, i) => (
                 <li key={g.id} className={`guess-row guess-${g.result} animate-fade-up`} style={{ animationDelay: `${i * 40}ms` }}>
+                  <span className="flex items-center gap-1.5 font-semibold text-xs text-white/60 bg-black/30 px-2 py-1 rounded-md border border-white/5">
+                    {ordinalLabels[i] || `${i + 1}º`}
+                  </span>
                   <span className="text-lg">{g.result === "correct" ? "🟩" : g.result === "close" ? "🟨" : "🟥"}</span>
                   <span className="flex-1 truncate font-medium">{g.title}</span>
-                  {g.year && <span className="text-sm opacity-60">{g.year}</span>}
+                  {g.year && <span className="text-sm opacity-60">({g.year})</span>}
                 </li>
               ))}
             </ul>
@@ -258,14 +341,23 @@ export default function Game() {
           <HintPanel puzzle={puzzle} stage={stage} done={done} mask={game.reveal > 0 || done ? game.mask : undefined} />
 
           {!done && game.reveal < 6 && (
-            <button
-              id="extra-hint"
-              onClick={() => (auth.premium && auth.configured ? grantLetter() : ad.show())}
-              className="group flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-amber-300/30 py-3 text-sm font-semibold text-amber-200/90 transition hover:border-amber-300/70 hover:bg-amber-300/5"
-            >
-              <span className="transition group-hover:scale-125">📺</span>
-              {auth.premium && auth.configured ? "Revelar uma letra do título" : "Assistir anúncio para revelar uma letra"}
-            </button>
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-1.5 px-1">
+                <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-amber-300/60">
+                  <span className="rounded bg-amber-400/20 px-1 py-0.2 border border-amber-400/30 text-[9px] text-amber-200">AD</span>
+                  Espaço Publicitário
+                </span>
+                <span className="text-[10px] text-white/40">Dica bônus</span>
+              </div>
+              <button
+                id="extra-hint"
+                onClick={() => (auth.premium && auth.configured ? grantLetter() : ad.show())}
+                className="group flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-amber-400/40 bg-amber-400/5 py-3 text-sm font-semibold text-amber-200 transition hover:border-amber-400/80 hover:bg-amber-400/10 shadow-sm"
+              >
+                <span className="transition group-hover:scale-125">📺</span>
+                <span>{auth.premium && auth.configured ? "Revelar uma letra do título (VIP)" : "Assistir Anúncio Patrocinado para Revelar Letra"}</span>
+              </button>
+            </div>
           )}
         </main>
       )}
@@ -309,6 +401,27 @@ export default function Game() {
         onInfinite={() => (setModal(null), mode.kind === "infinite" ? load(mode) : setMode({ kind: "infinite" }))}
       />
       {ad.modal}
+      </div>
+
+      {/* Banner Lateral Direito (Desktop / Skyscraper) */}
+      {!auth.premium && (
+        <aside className="sticky top-16 hidden h-[600px] w-40 xl:flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-3 text-center text-white/40 ml-6 mt-4 backdrop-blur-sm shrink-0">
+          <span className="rounded bg-amber-400/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-300 border border-amber-400/30 mb-2">
+            AD · Publicidade
+          </span>
+          <div className="text-3xl mb-1">🍿</div>
+          <span className="text-xs font-semibold text-white/60">Espaço de Anúncio</span>
+          <span className="text-[10px] text-white/30 mt-1">160 x 600</span>
+          <div className="mt-4 border-t border-white/5 pt-3 w-full">
+            <button
+              onClick={() => setModal("premium")}
+              className="text-[10px] text-amber-300/80 hover:text-amber-200 underline"
+            >
+              Remover anúncios com VIP 👑
+            </button>
+          </div>
+        </aside>
+      )}
     </div>
   );
 }
@@ -322,13 +435,29 @@ function IconBtn({ id, label, onClick, children }: { id: string; label: string; 
 }
 
 function Attempts({ guesses }: { guesses: GuessEntry[] }) {
+  const count = guesses.length;
   return (
-    <div className="flex gap-1.5" aria-label="Tentativas">
-      {Array.from({ length: MAX_ATTEMPTS }, (_, i) => {
-        const g = guesses[i];
-        const c = !g ? "bg-white/10" : g.result === "correct" ? "bg-emerald-400" : g.result === "close" ? "bg-amber-400" : "bg-rose-500";
-        return <span key={i} className={`h-2.5 w-6 rounded-full transition-all duration-500 ${c}`} />;
-      })}
+    <div className="flex flex-col items-end gap-1" aria-label="Tentativas">
+      <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-white/50">
+        <span>🎯</span>
+        <span>Tentativas</span>
+        <span className="font-mono text-amber-300 font-bold">
+          {count}/{MAX_ATTEMPTS}
+        </span>
+      </div>
+      <div className="flex gap-1.5 p-1 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm">
+        {Array.from({ length: MAX_ATTEMPTS }, (_, i) => {
+          const g = guesses[i];
+          const c = !g
+            ? "bg-white/10"
+            : g.result === "correct"
+              ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"
+              : g.result === "close"
+                ? "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]"
+                : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]";
+          return <span key={i} className={`h-2 w-5 rounded-full transition-all duration-500 ${c}`} />;
+        })}
+      </div>
     </div>
   );
 }

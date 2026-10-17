@@ -24,20 +24,20 @@ export default function SceneImage({ src, stage, done, seed }: Props) {
   const origin = focusPoints[seed % focusPoints.length];
   const s = done ? 5 : stage;
 
-  // Progressão estilo Loldle (zoom aproximado que recua a cada tentativa)
+  // Progressão estilo Loldle com zoom bem mais fechado (revela apenas detalhes mínimos)
   const styles: Record<number, { scale: number; filter: string }> = {
-    0: { scale: 3.8, filter: "none" },      // Frame 1: Zoom extremo num detalhe
-    1: { scale: 2.8, filter: "none" },      // Frame 2: Detalhe mais amplo
-    2: { scale: 2.0, filter: "none" },      // Frame 3: Meio plano
-    3: { scale: 1.45, filter: "none" },     // Frame 4: Quase todo o cartaz
-    4: { scale: 1.15, filter: "none" },     // Frame 5: Quase completo
+    0: { scale: 6.5, filter: "none" },      // Frame 1: Micro-detalhe extremo (textura, olho, pedaço de roupa)
+    1: { scale: 4.8, filter: "none" },      // Frame 2: Pequeno detalhe aproximado
+    2: { scale: 3.4, filter: "none" },      // Frame 3: Pedaço um pouco maior
+    3: { scale: 2.3, filter: "none" },      // Frame 4: Quase um terço do cartaz
+    4: { scale: 1.5, filter: "none" },      // Frame 5: Metade do cartaz
     5: { scale: 1, filter: "none" },        // Revelado: 100% do cartaz
   };
 
   const st = styles[s] || styles[0];
 
   return (
-    <div className="scene-frame group">
+    <div className={`scene-frame group transition-all duration-700 ${done ? "!aspect-[2/3] !max-w-[22rem]" : ""}`}>
       <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

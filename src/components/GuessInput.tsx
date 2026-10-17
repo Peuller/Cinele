@@ -24,7 +24,7 @@ export default function GuessInput({ disabled, shake, excluded, onGuess, onSkip 
     const ctrl = new AbortController();
     const t = setTimeout(() => {
       setLoading(true);
-      fetch(`/cinele/api/search?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
+      fetch(`/api/search?q=${encodeURIComponent(q)}`, { signal: ctrl.signal })
         .then((r) => r.json())
         .then((data: MovieLite[]) => {
           setResults(data.filter((m) => !excluded.includes(m.id)));
@@ -115,10 +115,11 @@ export default function GuessInput({ disabled, shake, excluded, onGuess, onSkip 
                 )}
                 <div className="min-w-0">
                   <div className="truncate font-medium text-white">{m.title}</div>
-                  <div className="truncate text-xs text-white/45">
-                    {m.year ?? "—"}
-                    {m.originalTitle && m.originalTitle !== m.title ? ` · ${m.originalTitle}` : ""}
-                  </div>
+                  {m.originalTitle && m.originalTitle !== m.title && (
+                    <div className="truncate text-xs text-white/40">
+                      {m.originalTitle}
+                    </div>
+                  )}
                 </div>
               </button>
             </li>
